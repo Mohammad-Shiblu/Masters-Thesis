@@ -16,8 +16,8 @@ class ImageDataset(Dataset):
     def __getitem__(self, index):
         target_path = os.path.join(self.target_dir, self.images[index])         # target path (clean image)
         img_path = os.path.join(self.image_dir, f"noise_{self.images[index]}")  # input image (noisy image)
-        image = Image.open(img_path).convert("L")
-        target_image = Image.open(target_path).convert("L")
+        image = Image.open(img_path).convert("RGB")
+        target_image = Image.open(target_path).convert("RGB")
 
         if self.transform is not None:
             image = self.transform(image)
