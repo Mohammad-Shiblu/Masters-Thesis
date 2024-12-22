@@ -4,9 +4,12 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 import torchvision.transforms as transforms
+import torchvision.transforms.functional as TF  # Add this import if needed
 from pytorch_msssim import ssim
 import numpy as np
 from utils.dataset import ImageDataset
+import os
+
 
 
 class BaseTrainer:
@@ -74,8 +77,6 @@ class BaseTrainer:
         normalized_output = (output - output_mean) / (output_std + 1e-8)  
         normalized_output = normalized_output * target_std + target_mean  
 
-        # normalized_output = 2 * normalized_output - 1
-
         return normalized_output
 
     @staticmethod
@@ -95,28 +96,17 @@ class BaseTrainer:
 
         return psnr.item(), ssim_val.item()
     
-    def train_stage(self, stage_num):
-        raise NotImplementedError("setup_models() needs to be implemented in the subclass.")
+    def train_stage(self):
+        raise NotImplementedError("train_stage() needs to be implemented in the subclass.")
     
-    def validate_stage(self, stage_num):
-        raise NotImplementedError("setup_models() needs to be implemented in the subclass.")
+    def validate_stage(self):
+        raise NotImplementedError("validate_stage() needs to be implemented in the subclass.")
     
     def test_system(self):
-        raise NotImplementedError("setup_models() needs to be implemented in the subclass.")
+        raise NotImplementedError("test_system() needs to be implemented in the subclass.")
     
-    def visualize_results(self, num_smaples=5):
-        self.model.eval()
+    def visualize_results(self, num_samples=5):
+        raise NotImplementedError("visualize_results() needs to be implemented in the subclass.")
 
-        noisy_imgs_list = []
-        clean_imgs_list = []
-        test_iter = iter(self.test_loader)
-        for _ in range(num_smaples):
-            try: 
-                noisy_img, clean_img = next(test_iter)
-            except StopIteration:
-                # Reset the iterator if there are fewer samples than requested
-                test_iter = iter(self.test_loader)
-                noisy_img, clean_img = next(test_iter)
-            # Move images to the device and store them in lists
-            noisy_imgs_list.append(noisy_img.to(self.device))
-            clean_imgs_list.append(clean_img.to(self.device))
+
+
