@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import os
+import numpy as np
 
 class ImageDataset(Dataset):	
     def __init__(self, image_dir, target_dir, transform = None):
@@ -19,8 +20,10 @@ class ImageDataset(Dataset):
         image = Image.open(img_path).convert("RGB")
         target_image = Image.open(target_path).convert("RGB")
 
+
         if self.transform is not None:
             image = self.transform(image)
             target_image = self.transform(target_image) 
+
             
         return image, target_image
