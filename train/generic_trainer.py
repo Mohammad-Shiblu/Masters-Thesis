@@ -7,6 +7,7 @@ from tqdm import tqdm
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 import lpips
 import os
+os.environ['TORCH_HOME'] = '/home/woody/iwi5/iwi5240h/Masters-Thesis/pretrained/'
 import matplotlib.pyplot as plt
 
 class UNetTrainer(BaseTrainer):
@@ -79,7 +80,7 @@ class UNetTrainer(BaseTrainer):
 
             # log metrics
             self.logger.info(
-                f"Epoch {epoch+1} ------------------------------- "
+                f"Epoch {epoch+1}"
                 f"Train Loss: {train_loss:.4f}, PSNR: {train_psnr:.2f}, SSIM: {train_ssim:.4f} | "
                 f"Val Loss: {val_loss:.4f}, PSNR: {val_psnr:.2f}, SSIM: {val_ssim:.4f}"
             )
@@ -168,26 +169,24 @@ class UNetTrainer(BaseTrainer):
         with torch.no_grad():
             denoised_image = self.model(noisy_imgs)
         
-        noisy_image = noisy_image[0].permute(1, 2, 0).cpu().numpy()
-        denoised_image = denoised_image[0].permute(1, 2, 0).cpu().numpy()  
-        clean_image = clean_image[0].permute(1, 2, 0).cpu().numpy()
+        
 
         # plot the image   
         fig, axes = plt.subplots(num_samples, 3, figsize=(15, 5*num_samples))
         for i in range(num_samples):
-            noisy_img = noisy_image[0].permute(1, 2, 0).cpu().numpy()
+            noisy_img = noisy_imgs[i].permute(1, 2, 0).cpu().numpy()
             noisy_img = self.normalize(noisy_img)
             axes[i, 0].imshow(noisy_img)
             axes[i, 0].set_title("Noisy Image")
             axes[i, 0].axis("off")
             
-            denoised_img = denoised_image[0].permute(1, 2, 0).cpu().numpy()
+            denoised_img = denoised_image[i].permute(1, 2, 0).cpu().numpy()
             denoised_img = self.normalize(denoised_img)
             axes[i, 1].imshow(denoised_img)
             axes[i, 1].set_title("Denoised Image")
             axes[i, 1].axis("off")
             
-            clean_img = clean_image[0].permute(1, 2, 0).cpu().numpy()
+            clean_img = clean_imgs[i].permute(1, 2, 0).cpu().numpy()
             clean_img = self.normalize(clean_img)
             axes[i, 2].imshow(clean_img)
             axes[i, 2].set_title("Clean Image")
