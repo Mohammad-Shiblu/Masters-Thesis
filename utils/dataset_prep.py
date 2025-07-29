@@ -3,11 +3,10 @@ import os
 import pydicom
 import json
 
-
 def prep_dataset(config): 
     save_dir = os.path.join(config['save_dir'], config['slice_thickness']+" "+ config['reconstruction_kernel'])
     if not os.path.exists(save_dir):
-        os.makedirs(os.save_dir)
+        os.makedirs(save_dir)
         print(f"Directory path create: {save_dir}")
 
     data_dir = os.path.join(config['data_dir'], config['slice_thickness']+" "+ config['reconstruction_kernel'])
@@ -34,8 +33,75 @@ def prep_dataset(config):
 
         print(f"{patient} data has been processed successfully")
 
-    print("Data processing and dataser preparation completed")               
- 
+    print("Data processing and dataset preparation are completed")       
+
+
+# datatset preparation with gaussian noise and block distorted part
+def prep_dataset_gaussian_noise(config):
+    save_dir = os.path.join(config['save_dir'], config['slice_thickness']+" "+ config['reconstruction_kernel'])
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+        print(f"Directory path create: {save_dir}")
+
+    data_dir = os.path.join(config['data_dir'], config['slice_thickness']+" "+ config['reconstruction_kernel'])
+
+    
+    final_data_dir = os.path.join(data_dir, "FD_"+config['slice_thickness'], "full_"+config['slice_thickness'])
+    patient_list = sorted(os.listdir(final_data_dir))
+    # print(patient_list)
+
+    for patient in patient_list:
+        patient_target_path = os.path.join(final_data_dir, patient, "full_"+config['slice_thickness']) # data file inside individual patient
+        
+        if not os.path.exists(patient_target_path):
+            print(f"Patient path does not exist: {patient_target_path}")
+            continue
+        all_slices = HU_converted(load_scan(patient_target_path))
+        
+        for slice_num in range(len(all_slices)):
+            slice = normalize(all_slices[slice_num], config)
+            target_name = f"{patient}_target_{slice_num:03d}.npy"
+            np.save(os.path.join(save_dir, target_name), slice)
+            # prep input image
+            noise_image = add_noise(slice)
+            patched_image = add_patches(noise_image)
+            input_name = f"{patient}_input_{slice_num:03d}.npy"
+            np.save(os.path.join(save_dir, input_name), patched_image)
+
+        print(f"{patient} data has been processed successfully")
+
+    print("Data processing and dataset preparation are completed") 
+
+    
+# function for adding black and white patches into image
+def add_patches(image, num_patches = 5, size_range = (30, 40)):
+    patched_image = image.copy()
+    height, width = patched_image.shape
+    num = np.random.randint(1, num_patches)
+    for _ in range(num):
+        patch_height = np.random.randint(size_range[0], size_range[1])
+        patch_width = np.random.randint(size_range[0], size_range[1])
+
+        top_left_y = np.random.randint(0, height -patch_height)
+        top_left_x = np.random.randint(0, width - patch_width)
+
+        if np.random.rand() > 0.5:
+            patch_color = 0
+        else:
+            patch_color = 1
+        
+        patched_image[top_left_y: top_left_y + patch_height, top_left_x: top_left_x + patch_width] = patch_color
+
+    return patched_image
+
+
+
+# function for adding noise into image
+def add_noise(image, mean=0.0, std=0.1):
+    noise = np.random.normal(loc=mean, scale=std, size=image.shape)
+    noisy_image = image + noise
+    noisy_image = np.clip(noisy_image, 0.0, 1.0)
+    return noisy_image
 
 # sort the slices based on the ImagePositionPatient[2] attribute or z axis position
 def load_scan(path):
@@ -86,7 +152,8 @@ if __name__ == '__main__':
     with open('config/data_prep.json', 'r') as f:
         config = json.load(f)
     
-    prep_dataset(config)
+    # prep_dataset(config)
+    prep_dataset_gaussian_noise(config)
 
 
 
