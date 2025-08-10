@@ -1,0 +1,22 @@
+{
+    "data_choices": {
+        "low_dose": "medical_image_datasets/low_dose_ct/1mm B30/",
+        "synthetic_noise": "medical_image_datasets/synthetic_added_noise/1mm B30"
+    },
+    "test_no": "test_no_1",
+    "selected_data": "synthetic_noise",
+    "checkpoints_dir": "checkpoints/",
+    "output_dir": "output/",
+    "model": "unet",
+    "val_data": "L333",
+    "test_data": "L506",
+    "device": "cuda",
+    "lr": 0.001,
+    "epochs": 1,
+    "patience": 5,    
+    "num_stages": 3,
+    "num_workers": 2,
+    "batch_size": 1,
+    "image_height": 512,
+    "image_width": 512
+}

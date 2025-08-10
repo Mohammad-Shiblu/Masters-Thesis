@@ -2,11 +2,11 @@ from torch.utils.data import Dataset, DataLoader
 import os
 import numpy as np
 import glob
-import json
+import torch
 
 
 class CtDataset(Dataset):
-    def __init__(self, config, transform=None, patch_size=None):
+    def __init__(self, config, transform=None, mode='train', patch_size=None):
         self.config = config
         self.transform = transform
         self.patch_size = patch_size
@@ -19,17 +19,20 @@ class CtDataset(Dataset):
         test_id = config['test_data']
         val_id = config['val_data']
 
-        if config['mode'] == "train":
+        if mode == "train":
             self.input_path_ = [i for i in input_paths if test_id not in i and val_id not in i]
             self.target_path_ = [t for t in target_paths if test_id not in t and val_id not in t]
 
-        elif config['mode'] == "val":
+        elif mode == "val":
             self.input_path_ = [i for i in input_paths if val_id in i]
             self.target_path_ = [t for t in target_paths if val_id in t]
 
-        else:  # test mode
+        elif mode == "test":  # test mode
             self.input_path_ = [i for i in input_paths if test_id in i]
             self.target_path_ = [t for t in target_paths if test_id in t]
+        else:
+            raise ValueError("Mode must be either 'train', 'val or 'test'.")
+
 
         assert len(self.input_path_) == len(self.target_path_), "Mismatch between input and target samples"
 
@@ -43,12 +46,12 @@ class CtDataset(Dataset):
         if self.transform is not None:
             input_image = self.transform(input_image)
             target_image = self.transform(target_image)
-        
+    
         if self.patch_size is not None:
             input_image, target_image = get_patch(input_image, target_image, self.patch_size)
 
 
-        return input_image, target_image
+        return input_image.float(), target_image.float() # tranform to float32 to matched the datatype
     
 
 
@@ -74,12 +77,4 @@ def get_patch(input_image, target_image, patch_size, patch_n=10, background=0.1)
             patch_target_img.append(patch_target_img)
 
     return np.array(patch_input_img), np.array(patch_target_img)
-
-
-
-if __name__ == "__main__":
-
-    with open('../config/train.json', 'r') as f:
-        config = json.load(f)
-
 
