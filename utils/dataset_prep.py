@@ -97,9 +97,12 @@ def add_patches(image, num_patches = 5, size_range = (30, 40)):
 
 
 # function for adding noise into image
-def add_noise(image, mean=0.0, std=0.1):
-    noise = np.random.normal(loc=mean, scale=std, size=image.shape)
-    noisy_image = image + noise
+def add_noise(image, mean=0.0, std=0.4, peak_counts=100):
+    lam = image*float(peak_counts)
+    poisson_noisy = np.random.poisson(lam).astype(np.float32) / float(peak_counts)
+    # --gaussian noise----
+    gauss = np.random.normal(loc=mean, scale=std, size=image.shape)
+    noisy_image = poisson_noisy + gauss
     noisy_image = np.clip(noisy_image, 0.0, 1.0)
     return noisy_image
 
@@ -121,7 +124,7 @@ def load_scan(path):
 # convert the pixel values to Hounsfield Units (HU): pixel_value = slope * pixel_value + intercept
 def HU_converted(slices):
     image = np.stack([s.pixel_array for s in slices])
-    image = image.astype(np.int16)
+    image = image.astype(np.float32)
     image[image == -2000] = 0  # set background to 0
     for slice_num in range(len(slices)):
         intercept = slices[slice_num].RescaleIntercept
@@ -129,12 +132,12 @@ def HU_converted(slices):
         if slope == 0:
             raise ValueError(f"Invalid slope = 0 for slice {slice_num}")
         elif slope != 1:
-            image[slice_num]= slope * image[slice_num].astype(np.float64)
-            image[slice_num] = image[slice_num].astype(np.int16)
+            image[slice_num]= slope * image[slice_num].astype(np.float32)
+            image[slice_num] = image[slice_num].astype(np.float32)
         
-        image[slice_num] += np.int16(intercept)
+        image[slice_num] += np.float32(intercept)
     
-    return np.array(image, dtype=np.int16)  
+    return np.array(image, dtype=np.float32)  
         
 
 # CT image normalization

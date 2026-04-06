@@ -2,7 +2,10 @@ import json
 import torch
 from utils.help import setup_logger
 from train.generic_trainer import UNetTrainer
-from train.munet_trainer import MUnetTrainer
+from train.munet_trainer import CascadedUnetTrainer
+from train.separate_trainer import ProgressiveCascadedTrainer
+import os
+os.environ['TORCH_HOME'] = '/home/shiblu/Project/Masters_thesis/Masters-Thesis/torch_cache'
 
 
 def main():
@@ -16,10 +19,16 @@ def main():
         logger.info(f"{key}: {value}")
 
 
-    system = UNetTrainer(config= config, logger= logger, test_local=True)
+   
+    # system = CascadedUnetTrainer(config= config, logger= logger, test_local=False)
+    # system = UNetTrainer(config=config, logger=logger, test_local= False)
+    system = ProgressiveCascadedTrainer(config=config, logger=logger, test_local=False)
 
     system.run()
 
 
 if __name__ == "__main__":
     main()
+
+
+

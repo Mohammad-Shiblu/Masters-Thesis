@@ -2,11 +2,13 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from models.unet import UNet
+
 from train.base import BaseTrainer
 from tqdm import tqdm
 import lpips
 import os
-# os.environ['TORCH_HOME'] = '/home/woody/iwi5/iwi5240h/Masters-Thesis/pretrained/'
+from utils.loss import compute_loss, CombinedLoss, GrayscaleLPIPSLoss
+
 import matplotlib.pyplot as plt
 from utils.metrics import compute_metrics, compute_ssim, compute_psnr
 from utils.help import EarlyStopping
@@ -16,15 +18,19 @@ class UNetTrainer(BaseTrainer):
         super().__init__(**kwargs)
         self.setup_data()
         self.setup_models()
-        self.criterion = nn.L1Loss()  # lpips.LPIPS(net='alex').to(self.device)
+        self.criterion = GrayscaleLPIPSLoss(net="vgg").to(self.device)   
         self.optimizer = optim.AdamW(self.model.parameters(), lr = self.config['lr'])
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode = 'min', factor=0.5, patience=5)
-        
+
+    # ========== MODEL SETUP ==========
+       
     def setup_models(self):
         self.model = UNet(in_channels=1, out_channels=1).to(self.config['device'])
 
     def train(self):
         early_stopping = EarlyStopping(patience=self.config["patience"], min_delta=0.0)
+
+        self.logger.info(f"{self.config['test_no']}: Loss function: LPIPS LOSS and | optimizer:Adam | Schedular: ReduceLROnPlateaue")
         
         for epoch in range(self.config['epochs']):
             self.model.train()
@@ -74,15 +80,19 @@ class UNetTrainer(BaseTrainer):
             )
 
             early_stopping.check_early_stop(val_result[0])
+            if early_stopping.counter == 0:
+                self.save_model()
+                self.logger.info(f"best model has been saved at epoch {epoch} with val_loss of {val_result[0]}")
 
             if early_stopping.stop_training:
-                self.save_model() 
-                self.logger.info(f"saved the best model with val loss. {val_result[0]}")
+                self.logger.info(f"Training stopped due to early stopper at epoch {epoch}")
                 self.plot_loss_curves()
-                self.logger.info(f"trained and val loss curves saved")
+                self.logger.info(f"Trained and val loss curves saved")
+                break
         
         self.logger.info(f"All the epochs completed...")
-
+        self.plot_loss_curves()
+        self.logger.info(f"Trained and val loss curves saved")
                             
     def validate(self):
         self.model.eval()
@@ -111,6 +121,8 @@ class UNetTrainer(BaseTrainer):
         return (val_loss, val_psnr, val_ssim)
             
     def test(self):
+        self.load_model()
+        self.logger.info("model with lowest val loss loaded for testing.")
         self.model.eval()
         ori_psnr, ori_ssim, ori_rmse = 0, 0, 0
         pred_psnr, pred_ssim, pred_rmse = 0, 0, 0

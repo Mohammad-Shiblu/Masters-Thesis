@@ -2,21 +2,33 @@
     "data_choices": {
         "low_dose": "medical_image_datasets/low_dose_ct/1mm B30/",
         "synthetic_noise": "medical_image_datasets/synthetic_added_noise/1mm B30"
-    },
-    "test_no": "test_no_1",
+        },
     "selected_data": "synthetic_noise",
+    "test_no": "test_no_35",
+    "test_details": "Testing with unet, cascaded unet with separate training data and lpips loss (with no grad param),\n unet use BatchNorm2d instead of InstanceNorm2d, unet no: 3, batch size: 8",
+    
     "checkpoints_dir": "checkpoints/",
     "output_dir": "output/",
-    "model": "unet",
+
+    "model": "cascaded",
     "val_data": "L333",
     "test_data": "L506",
     "device": "cuda",
     "lr": 0.001,
-    "epochs": 1,
-    "patience": 5,    
-    "num_stages": 3,
-    "num_workers": 2,
-    "batch_size": 1,
-    "image_height": 512,
-    "image_width": 512
+    "epochs": 150,
+    "patience": 10,    
+    "num_unets": 3,
+    "num_workers": 4,
+    "batch_size": 16,
+    "patch_size": 64,
+    "patches_per_image": 10,
+    "image_height": 256,
+    "image_width": 256,
+    "weight_method": "static",
+    "model_params": {
+        "encoder_name": "resnet18",
+        "encoder_weights": null,
+        "in_channels": 1,
+        "classes": 1
+    }
 }
