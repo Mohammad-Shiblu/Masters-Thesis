@@ -1,9 +1,10 @@
 {
     "save_dir": "medical_image_datasets/synthetic_added_noise/",
+    "standard_noise_save_dir": "medical_image_datasets/standard_ct_noise/",
     "data_dir": "medical_image_datasets/mayo_CT/Training_Image_Data/",
     "test_data" : "L506",
     "norm_min": -1024.0,
     "norm_max": 3072.0,
-    "slice_thickness": "1mm", 
+    "slice_thickness": "1mm",
     "reconstruction_kernel": "B30"
 }
