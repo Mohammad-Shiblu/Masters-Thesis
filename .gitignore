@@ -1,7 +1,10 @@
+# CUDA runtime symlink created by conda nvidia packages (filename is a single space)
+\ 
 synthetic_data/
 torch_cache/
 pretrained/
 experiments/
+projection_data/
 logs/
 check_points/
 checkpoints/
