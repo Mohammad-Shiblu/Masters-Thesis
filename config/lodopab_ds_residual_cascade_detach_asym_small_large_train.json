@@ -1,0 +1,32 @@
+{
+    "_description": "Residual cascade (asymmetric: small → large, detach) — Stage 0 U-Net [16,32,64,128] ~1.9M (lightweight coarse denoiser) + Stage 1 ResUNet [48,96,192,384] ~17M (heavy structural refiner). Tests the hypothesis that the first stage only needs to remove gross streaks while the second stage carries most of the representational burden. Compared against the symmetric residual_cascade_detach: if asymmetric small→large outperforms symmetric at similar or lower total params, asymmetric capacity allocation is a real design axis. Paired with the large→small variant as a direction control (without it, any win here is just 'asymmetry helps' and cannot claim a preferred direction).",
+
+    "trainer": "deep_supervision",
+
+    "test_no": "lodopab_residual_cascade_detach_asym_small_large_01",
+    "model": "lodopab_deep_supervision",
+
+    "data_path": null,
+
+    "num_stages": 2,
+    "stage0_features": [16, 32, 64, 128],
+    "stage1_features": [48, 96, 192, 384],
+    "stage1_mode": "residual",
+
+    "dual_domain": false,
+    "detach_stages": true,
+
+    "add_artifacts": true,
+    "val_artifact_seed": 42,
+    "test_artifact_seed": 0,
+
+    "batch_size": 16,
+    "num_workers": 8,
+
+    "lr": 3e-4,
+    "epochs": 150,
+    "patience": 15,
+
+    "checkpoints_dir": "checkpoints",
+    "output_dir": "output"
+}

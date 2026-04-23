@@ -1,0 +1,32 @@
+{
+    "_description": "Residual cascade (asymmetric: large → small, detach) — Stage 0 U-Net [48,96,192,384] ~17M (heavy coarse denoiser) + Stage 1 ResUNet [16,32,64,128] ~1.9M (lightweight refiner). Direction control for the small→large asymmetric variant: same total params, capacities swapped between stages. Separates 'asymmetry helps' from 'coarse-then-fine helps'. If small→large wins and this loses, the directional claim is defensible.",
+
+    "trainer": "deep_supervision",
+
+    "test_no": "lodopab_residual_cascade_detach_asym_large_small_01",
+    "model": "lodopab_deep_supervision",
+
+    "data_path": null,
+
+    "num_stages": 2,
+    "stage0_features": [48, 96, 192, 384],
+    "stage1_features": [16, 32, 64, 128],
+    "stage1_mode": "residual",
+
+    "dual_domain": false,
+    "detach_stages": true,
+
+    "add_artifacts": true,
+    "val_artifact_seed": 42,
+    "test_artifact_seed": 0,
+
+    "batch_size": 16,
+    "num_workers": 8,
+
+    "lr": 3e-4,
+    "epochs": 150,
+    "patience": 15,
+
+    "checkpoints_dir": "checkpoints",
+    "output_dir": "output"
+}

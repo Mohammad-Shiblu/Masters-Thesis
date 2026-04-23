@@ -1,4 +1,6 @@
 {
+    "_description": "Naive cascade (small) — two identical U-Nets [32,64,128,256] ~7.7M each, ~15M total. Stage 1 is trained with frozen Stage-0 output (detach). Tests whether a second U-Net trained on Stage-0 residuals adds anything when stages are fully independent. Compared against the small single U-Net baseline to isolate the effect of adding a naive refinement stage; compared against the large naive cascade to rule out capacity as the reason for any failure.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_naive_cascade_detach_01",

@@ -1,4 +1,6 @@
 {
+    "_description": "Naive cascade (small, end-to-end) — two identical U-Nets [32,64,128,256] ~15M total, trained jointly with gradients flowing through both stages. Controls for the detach variant: rules out the claim that naive cascading only fails because the stages are trained independently. If e2e also fails, joint optimisation alone cannot rescue the naive architecture.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_naive_cascade_e2e_01",

@@ -1,4 +1,6 @@
 {
+    "_description": "Baseline 1 — Single-stage U-Net, LARGE capacity [64,128,256,512] ~31M params. Capacity anchor for the thesis: any cascade with fewer total params loses by default, so naive-cascade failure claims must be made against a cascade at least this large.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_baseline_unet_01",

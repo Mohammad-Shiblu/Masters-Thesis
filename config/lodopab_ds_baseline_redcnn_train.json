@@ -1,4 +1,6 @@
 {
+    "_description": "Baseline 2 — RED-CNN (96 filters, 5 conv + 5 deconv, no pooling). External literature reference for LDCT denoising. Not parameter-matched to U-Net on purpose — it is the published architecture for this task and serves as a reference point, not as an architectural ablation control.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_baseline_redcnn_01",

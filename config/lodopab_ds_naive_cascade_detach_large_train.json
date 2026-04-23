@@ -1,0 +1,32 @@
+{
+    "_description": "Naive cascade (large, detach) — two identical U-Nets [48,96,192,384] ~17M each, ~34M total. Critical control for the thesis claim 'naive cascading fails even when total capacity exceeds a single large U-Net'. Total params (~34M) are comparable to or larger than the single large U-Net baseline (~31M). If this still fails to beat the large baseline, capacity cannot rescue the naive architecture — the failure is structural.",
+
+    "trainer": "deep_supervision",
+
+    "test_no": "lodopab_naive_cascade_detach_large_01",
+    "model": "lodopab_deep_supervision",
+
+    "data_path": null,
+
+    "num_stages": 2,
+    "stage0_features": [48, 96, 192, 384],
+    "stage1_features": [48, 96, 192, 384],
+    "stage1_mode": "direct",
+
+    "dual_domain": false,
+    "detach_stages": true,
+
+    "add_artifacts": true,
+    "val_artifact_seed": 42,
+    "test_artifact_seed": 0,
+
+    "batch_size": 16,
+    "num_workers": 8,
+
+    "lr": 3e-4,
+    "epochs": 150,
+    "patience": 15,
+
+    "checkpoints_dir": "checkpoints",
+    "output_dir": "output"
+}

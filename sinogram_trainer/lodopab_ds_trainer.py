@@ -511,29 +511,37 @@ class LoDoPaBDeepSupervisionTrainer(BaseTrainer):
         self.logger.info("STARTING LODOPAB DEEP SUPERVISION TRAINING")
         self.logger.info("#" * 80 + "\n")
 
-        stopper       = EarlyStopping(patience=self.config["patience"], min_delta=0.0)
-        best_val_loss = float("inf")
+        stopper = EarlyStopping(patience=self.config["patience"], min_delta=0.0)
+        start_epoch, best_val_loss = self._load_training_state(stopper)
 
-        for epoch in range(self.config["epochs"]):
-            tr = self.train_epoch(epoch)
-            va = self.validate(epoch)
+        if stopper.stop_training:
+            self.logger.info(
+                "Resumed run had already early-stopped — skipping training loop."
+            )
+        else:
+            for epoch in range(start_epoch, self.config["epochs"]):
+                tr = self.train_epoch(epoch)
+                va = self.validate(epoch)
 
-            self.scheduler.step(va["total"])
-            self._log_epoch_metrics(epoch, tr, va)
+                self.scheduler.step(va["total"])
+                self._log_epoch_metrics(epoch, tr, va)
 
-            self.train_losses.append(tr["total"])
-            self.val_losses.append(va["total"])
+                self.train_losses.append(tr["total"])
+                self.val_losses.append(va["total"])
 
-            stopper.check_early_stop(va["total"])
+                stopper.check_early_stop(va["total"])
 
-            if va["total"] < best_val_loss:
-                best_val_loss = va["total"]
-                self._save_model()
-                self.logger.info(f"  ✓ Best model saved at epoch {epoch}")
+                if va["total"] < best_val_loss:
+                    best_val_loss = va["total"]
+                    self._save_model()
+                    self.logger.info(f"  ✓ Best model saved at epoch {epoch}")
 
-            if stopper.stop_training:
-                self.logger.info(f"  Early stopping at epoch {epoch}")
-                break
+                # Full training-state snapshot for crash recovery (rolling, overwritten)
+                self._save_training_state(epoch, best_val_loss, stopper)
+
+                if stopper.stop_training:
+                    self.logger.info(f"  Early stopping at epoch {epoch}")
+                    break
 
         self.logger.info("Training completed")
         self.plot_loss_curves()
@@ -594,6 +602,84 @@ class LoDoPaBDeepSupervisionTrainer(BaseTrainer):
                     weights_only=True,
                 )
             )
+
+    # ── Resume: full training-state checkpoint ───────────────────────────────
+    # Rolling single file "last.pth" (overwritten every epoch, NOT per-epoch files)
+    # Disk footprint is constant regardless of how many epochs are trained.
+
+    def _training_state_path(self) -> str:
+        save_dir = os.path.join(
+            self.config["checkpoints_dir"],
+            self.config["model"],
+            self.config["test_no"],
+        )
+        return os.path.join(save_dir, "last.pth")
+
+    def _save_training_state(self, epoch: int, best_val_loss: float,
+                             stopper: EarlyStopping) -> None:
+        """Atomic write of full training state for crash recovery."""
+        path = self._training_state_path()
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        state = {
+            "epoch":         epoch,
+            "best_val_loss": best_val_loss,
+            "stages":        [m.state_dict() for m in self.stages],
+            "optimizer":     self.optimizer.state_dict(),
+            "scheduler":     self.scheduler.state_dict(),
+            "early_stop": {
+                "counter":       stopper.counter,
+                "best_loss":     stopper.best_loss,
+                "stop_training": stopper.stop_training,
+            },
+            "train_losses":  list(self.train_losses),
+            "val_losses":    list(self.val_losses),
+        }
+        tmp = path + ".tmp"
+        torch.save(state, tmp)
+        os.replace(tmp, path)   # atomic on POSIX — crash mid-save cannot corrupt last.pth
+
+    def _load_training_state(self, stopper: EarlyStopping):
+        """If last.pth exists, restore full state into self and the given stopper.
+
+        Returns
+        -------
+        start_epoch : int       — first epoch to run (last completed + 1)
+        best_val_loss : float   — best val loss seen so far
+        """
+        path = self._training_state_path()
+        if not os.path.exists(path):
+            self.logger.info("No checkpoint found — starting fresh from epoch 0.")
+            return 0, float("inf")
+
+        self.logger.info("")
+        self.logger.info("!" * 80)
+        self.logger.info(f"!!  RESUMING FROM INTERRUPTED RUN  —  {path}")
+        self.logger.info("!" * 80)
+        state = torch.load(path, map_location=self.device, weights_only=False)
+
+        for m, sd in zip(self.stages, state["stages"]):
+            m.load_state_dict(sd)
+        self.optimizer.load_state_dict(state["optimizer"])
+        self.scheduler.load_state_dict(state["scheduler"])
+
+        stopper.counter       = state["early_stop"]["counter"]
+        stopper.best_loss     = state["early_stop"]["best_loss"]
+        stopper.stop_training = state["early_stop"]["stop_training"]
+
+        self.train_losses = list(state["train_losses"])
+        self.val_losses   = list(state["val_losses"])
+
+        start_epoch   = state["epoch"] + 1
+        best_val_loss = state["best_val_loss"]
+        self.logger.info(
+            f"!!  Resumed at epoch {start_epoch} | "
+            f"best_val_loss={best_val_loss:.6f} | "
+            f"early_stop_counter={stopper.counter}/{stopper.patience} | "
+            f"history={len(self.train_losses)} epochs"
+        )
+        self.logger.info("!" * 80)
+        self.logger.info("")
+        return start_epoch, best_val_loss
 
     # ── Testing ───────────────────────────────────────────────────────────────
 

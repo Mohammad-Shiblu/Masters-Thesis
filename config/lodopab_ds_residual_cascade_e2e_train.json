@@ -1,4 +1,6 @@
 {
+    "_description": "Residual cascade (symmetric, end-to-end) — Stage 0 U-Net [32,64,128,256] + Stage 1 ResUNet [32,64,128,256], trained jointly. Stage 1 features now unified to 4 levels to match Stage 0. Controls for the detach variant and mirrors the naive-cascade detach/e2e pair, so the detach-vs-e2e axis is directly comparable across naive and residual modes.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_residual_cascade_e2e_01",
@@ -8,6 +10,7 @@
 
     "num_stages": 2,
     "stage0_features": [32, 64, 128, 256],
+    "stage1_features": [32, 64, 128, 256],
     "stage1_mode": "residual",
 
     "dual_domain": false,

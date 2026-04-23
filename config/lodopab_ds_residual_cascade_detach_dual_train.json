@@ -1,4 +1,6 @@
 {
+    "_description": "Residual cascade + dual-domain (detach) — Stage 0 U-Net [32,64,128,256] + Stage 1 ResUNet [32,64,128,256] with 3-channel input (Stage-0 output, Hann FBP, SIRT). Stage 1 now uses 4-level features (previously 5-level, confounding depth with the extra priors). This is the full proposed method. Against the plain residual cascade it isolates the contribution of the sinogram-domain priors; against the large naive cascade it supports the thesis claim that improvement is architectural, not from capacity.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_residual_cascade_detach_dual_01",
@@ -8,6 +10,7 @@
 
     "num_stages": 2,
     "stage0_features": [32, 64, 128, 256],
+    "stage1_features": [32, 64, 128, 256],
     "stage1_mode": "residual",
 
     "dual_domain": true,

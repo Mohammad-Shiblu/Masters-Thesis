@@ -1,4 +1,6 @@
 {
+    "_description": "Residual cascade (symmetric, detach) — Stage 0 U-Net [32,64,128,256] + Stage 1 ResUNet [32,64,128,256], stages trained independently. Both stages now use 4-level features (previously Stage 1 used 5-level [16,32,64,128,256] which confounded depth with the residual connection). Against the naive cascade this isolates the effect of the residual connection; against the dual-domain variant it isolates the effect of adding sinogram-domain priors.",
+
     "trainer": "deep_supervision",
 
     "test_no": "lodopab_residual_cascade_detach_01",
@@ -8,6 +10,7 @@
 
     "num_stages": 2,
     "stage0_features": [32, 64, 128, 256],
+    "stage1_features": [32, 64, 128, 256],
     "stage1_mode": "residual",
 
     "dual_domain": false,
