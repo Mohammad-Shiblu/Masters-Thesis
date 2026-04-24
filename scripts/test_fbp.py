@@ -49,7 +49,7 @@ def ssim(pred, gt):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--idx", type=int, default=0, help="Sample index in val set")
+    parser.add_argument("--idx", type=int, default=17, help="Sample index in val set")
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -57,7 +57,7 @@ def main():
 
     # ── Load one sample ───────────────────────────────────────────────────────
     print("Loading validation dataset...")
-    ds = LoDoPaBDataset(mode="validation", add_artifacts=False)
+    ds = LoDoPaBDataset(mode="test", add_artifacts=False)
     sino, gt = ds[args.idx]                # (1, 1000, 513), (1, 362, 362)
     sino = sino.unsqueeze(0).to(device)    # (1, 1, 1000, 513)
     gt   = gt.unsqueeze(0).to(device)      # (1, 1, 362, 362)
