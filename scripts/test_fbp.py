@@ -57,7 +57,7 @@ def main():
 
     # ── Load one sample ───────────────────────────────────────────────────────
     print("Loading validation dataset...")
-    ds = LoDoPaBDataset(split="validation", add_artifacts=False)
+    ds = LoDoPaBDataset(mode="validation", add_artifacts=False)
     sino, gt = ds[args.idx]                # (1, 1000, 513), (1, 362, 362)
     sino = sino.unsqueeze(0).to(device)    # (1, 1, 1000, 513)
     gt   = gt.unsqueeze(0).to(device)      # (1, 1, 362, 362)
