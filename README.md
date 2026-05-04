@@ -25,7 +25,6 @@ A single large U-Net reaches **36.11 dB PSNR** under the proposed corruption. At
 - **Residual cascade** — Stage 2 predicts an additive correction to Stage 1's output (ResUNet + tanh).
 
 ---
-
 ## Problem: Compound CT Degradation
 
 Clinical CT scans are rarely corrupted by a single artifact type. A post-operative chest scan at low dose may simultaneously exhibit Poisson-limited quantum noise, respiratory motion blur, ring artifacts from a miscalibrated detector, and metal streaks from an implant.
@@ -44,11 +43,6 @@ The three physical artifacts are activated independently by Bernoulli draws with
 <p align="center">
   <img src="Thesis_report/report_ct_restoration/figures/fig_artifact_examples.png" width="780" alt="Artifact examples"/>
   <br><em>FBP reconstructions under each artifact type applied in isolation and under the full compound setting. From left to right: clean (Poisson only), motion, ring, metal, compound.</em>
-</p>
-
-<p align="center">
-  <img src="Thesis_report/report_ct_restoration/figures/fig_severity_sweep.png" width="780" alt="Artifact severity sweep"/>
-  <br><em>Severity sweep for each artifact at three operating points. All parameter ranges are chosen to span a clearly perceptible but not anatomically destructive regime.</em>
 </p>
 
 ---
@@ -135,36 +129,6 @@ A **dual-filter** extension augments the Stage 2 input with Hann- and Shepp–Lo
 <p align="center">
   <img src="Thesis_report/report_ct_restoration/figures/results/fig_comparison_slice0017.png" width="900" alt="Full method comparison, slice 17"/>
   <br><em>All methods on the same test slice under compound corruption (Poisson + motion + ring + metal). From left: corrupted FBP input, BM3D, RED-CNN, U-Net (large), Residual cascade (dual-filter), ground truth.</em>
-</p>
-
-### Qualitative Results
-
-<p align="center">
-  <img src="Thesis_report/report_ct_restoration/figures/results/qual_unet_large_0190.png" width="760" alt="U-Net large output, slice 190"/>
-  <br><em>U-Net (large) — slice 190. Left to right: corrupted FBP input, Stage 1 output, ground truth.</em>
-</p>
-
-<p align="center">
-  <img src="Thesis_report/report_ct_restoration/figures/results/qual_residual_dual_0190.png" width="760" alt="Residual dual-filter cascade, slice 190"/>
-  <br><em>Residual cascade (dual-filter) — slice 190. Left to right: corrupted FBP, Stage 1, Stage 2, ground truth.</em>
-</p>
-
-<p align="center">
-  <img src="Thesis_report/report_ct_restoration/figures/results/qual_residual_dual_0903.png" width="760" alt="Residual dual-filter cascade, slice 903"/>
-  <br><em>Residual cascade (dual-filter) — slice 903 (compound: noise + ring + metal).</em>
-</p>
-
-<p align="center">
-  <img src="Thesis_report/report_ct_restoration/figures/results/stage_improvement_residual_dual.png" width="760" alt="Per-stage improvement, residual dual-filter"/>
-  <br><em>Per-stage improvement of the residual dual-filter cascade. The signed error maps (FBP − GT, Stage 1 − GT, Stage 2 − GT) show that Stage 2 removes residual streaks left by Stage 1.</em>
-</p>
-
-### Training Curves
-
-<p align="center">
-  <img src="Thesis_report/report_ct_restoration/figures/results/loss_curves_unet_baseline.png" width="370" alt="U-Net baseline loss"/>
-  <img src="Thesis_report/report_ct_restoration/figures/results/loss_curves_residual_detach.png" width="370" alt="Residual cascade loss"/>
-  <br><em>Left: U-Net (large) single-stage training curve. Right: Residual cascade (detach) — Stage 1 and Stage 2 per-epoch validation loss. Stage-2 gradient norm attenuates once Stage 1 has converged.</em>
 </p>
 
 ---
