@@ -16,4 +16,5 @@ lpips
 # Baseline
 bm3d
 
-# NOTE: torch_radon must be installed separately — see README or scripts/vastai_setup.sh
+# NOTE: torch_radon must be installed separately via  scripts/setup_environment.sh
+# (unmaintained; requires compiling from source with CUDA/PyTorch compatibility patches)

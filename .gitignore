@@ -11,12 +11,12 @@ checkpoints/
 fig/
 log/
 output/
-*test.py
+.claude/
 medical_image_datasets/
 *.pyc
 *.pth
 *.pt
 __pycache__/
 .venv/
-Thesis_report/
 data/
+extern/
