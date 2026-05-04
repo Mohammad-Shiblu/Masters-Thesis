@@ -28,12 +28,11 @@ os.chdir(REPO)
 
 os.environ.setdefault("TORCH_HOME", str(REPO / "torch_cache"))
 
-from sinogram_trainer.lodopab_ds_trainer import LoDoPaBDeepSupervisionTrainer
+from trainer.lodopab_ds_trainer import LoDoPaBDeepSupervisionTrainer
 from utils.help import setup_logger
 
 CONFIGS = [
     "config/lodopab_ds_baseline_unet_train.json",
-    "config/lodopab_ds_baseline_redcnn_train.json",
     "config/lodopab_ds_naive_cascade_e2e_train.json",
     "config/lodopab_ds_naive_cascade_detach_train.json",
     "config/lodopab_ds_residual_cascade_e2e_train.json",

@@ -29,7 +29,7 @@ sys.path.insert(0, str(REPO))
 os.chdir(REPO)
 os.environ.setdefault("TORCH_HOME", str(REPO / "torch_cache"))
 
-from sinogram_trainer.parallel_fbp import DifferentiableParallelFBP
+from trainer.parallel_fbp import DifferentiableParallelFBP
 from utils.lodopab_dataset import LoDoPaBDataset
 
 
