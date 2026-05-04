@@ -45,16 +45,14 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
 
-from base import BaseTrainer
-from models.image_domain.unet import UNet
-from models.image_domain.resunet import ResUNet
-from models.image_domain.redcnn import REDCNN
-from models.sinogram_domain.dncnn import ResidualCorrectionNet
+from trainer.base import BaseTrainer
+from models.unet import UNet
+from models.resunet import ResUNet
 from utils.lodopab_dataset import LoDoPaBDataset
 from utils.loss import Stage0Loss, ResidualRefinementLoss
 from utils.metrics import compute_psnr, compute_ssim, compute_rmse
 from utils.help import EarlyStopping
-from sinogram_trainer.parallel_fbp import DifferentiableParallelFBP
+from trainer.parallel_fbp import DifferentiableParallelFBP
 
 
 class LoDoPaBDeepSupervisionTrainer(BaseTrainer):
@@ -160,25 +158,14 @@ class LoDoPaBDeepSupervisionTrainer(BaseTrainer):
         self.logger.info("Setting up stage models …")
         self.stages = nn.ModuleList()
 
-        stage0_arch = self.config.get("stage0_arch", "unet")
-
         for stage in range(self.num_stages):
             if stage == 0:
-                if stage0_arch == "redcnn":
-                    model = REDCNN(
-                        num_filters = self.config.get("redcnn_filters",  96),
-                        kernel_size = self.config.get("redcnn_kernel",    5),
-                        num_layers  = self.config.get("redcnn_layers",    5),
-                        in_channels = 1,
-                    ).to(self.device)
-                    activation = "clamp"   # built into REDCNN.forward
-                else:
-                    features   = self.config.get("stage0_features", [32, 64, 128, 256])
-                    activation = "sigmoid"
-                    model = UNet(
-                        in_channels=1, out_channels=1,
-                        features=features, output_activation=activation,
-                    ).to(self.device)
+                features   = self.config.get("stage0_features", [32, 64, 128, 256])
+                activation = "sigmoid"
+                model = UNet(
+                    in_channels=1, out_channels=1,
+                    features=features, output_activation=activation,
+                ).to(self.device)
             elif self.stage1_mode == "direct":
                 # Naive cascade: prefer stage1_features if set, else match Stage 0
                 features   = self.config.get(
