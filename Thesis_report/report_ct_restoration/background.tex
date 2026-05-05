@@ -176,8 +176,7 @@ Two metrics are used throughout this thesis. The first, \gls{psnr}, expresses th
     \;=\; 10 \log_{10}\!\frac{\mathrm{MAX}^{2}}{\frac{1}{M}\sum_{j=1}^{M}\bigl(\hat{x}_{j} - x_{j}\bigr)^{2}},
     \label{eq:psnr}
 \end{equation}
-where $M$ is the number of image pixels and $\mathrm{MAX}$ is the dynamic range used for normalization (the LoDoPaB display window
-$[0,\,0.0457]\,\mathrm{mm}^{-1}$~\cite{Leuschner2021}). The second, \gls{ssim}~\cite{Wang2004}, compares local luminance, contrast, and structure between two images and is more strongly correlated with human perception of image quality than \gls{psnr},
+where \(M\) is the number of image pixels and \(\mathrm{MAX}\) is the dynamic range assumed in the PSNR calculation. Since all images in this thesis are normalized by \(\mu_{\max}\), their values lie in \([0,1]\), and \(\mathrm{MAX}=1.0\) is therefore used consistently throughout. The LoDoPaB display window \([0, 0.45]\)~\cite{Leuschner2021} is used for visualization only and does not affect the reported PSNR values. The second, \gls{ssim}~\cite{Wang2004}, compares local luminance, contrast, and structure between two images and is more strongly correlated with human perception of image quality than \gls{psnr},
 \begin{equation}
     \mathrm{SSIM}(\hat{\boldsymbol{x}},\boldsymbol{x})
     \;=\; \frac{(2\mu_{\hat{x}}\mu_{x} + c_{1})(2\sigma_{\hat{x}x} + c_{2})}

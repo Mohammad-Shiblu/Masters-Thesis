@@ -178,13 +178,17 @@ Masters-Thesis/
 │   ├── eval_gpu_models_per_artifact.py  # GPU-batched per-artifact evaluation
 │   ├── eval_per_artifact_count.py   # Evaluation vs. number of artifacts injected
 │   ├── smoke_check.py               # Quick import / forward-pass sanity check
-│   └── test_fbp.py                  # FBP visual sanity check
+│   ├── test_fbp.py                  # FBP visual sanity check
+│   ├── upload_checkpoints_hf.py     # Upload stage_*_best.pth files to Hugging Face
+│   └── download_checkpoints_hf.py   # Download checkpoints from Hugging Face
 │
 ├── notebooks/
 │   └── ct_denoising.ipynb           # Inference, visualisation, results summary
 │
 ├── Thesis_report/
-│   └── report_ct_restoration/       # LaTeX source (compiled on Overleaf)
+│   ├── final_report_ct_restoration.pdf   # Compiled thesis report
+│   ├── report_ct_restoration.zip         # LaTeX source archive
+│   └── report_ct_restoration/            # Extracted LaTeX source (compiled on Overleaf)
 │
 └── requirements.txt
 ```
@@ -338,7 +342,16 @@ python baselines/redcnn/test.py
 
 ## Checkpoints
 
-Pre-trained checkpoints are hosted on Hugging Face Hub (link to be added).
+Pre-trained checkpoints are hosted on Hugging Face: [shiblu95/ct-restoration-cascade](https://huggingface.co/shiblu95/ct-restoration-cascade)
+
+Each model directory contains `stage_0_best.pth` (and `stage_1_best.pth` for two-stage models). Download with:
+
+```bash
+pip install huggingface_hub
+python scripts/download_checkpoints_hf.py
+```
+
+Files are saved to `checkpoints/lodopab_deep_supervision/<model>/` — the exact paths expected by the eval scripts and notebook.
 
 ---
 

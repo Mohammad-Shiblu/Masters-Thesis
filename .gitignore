@@ -25,6 +25,8 @@ extern/
 scripts/generate_figures.py
 scripts/qual_figures.py
 
-# LaTeX compiled outputs
-Thesis_report/*.pdf
-Thesis_report/*.zip
+# LaTeX compiled outputs (extracted source and intermediate files ignored; final deliverables tracked)
+Thesis_report/report_ct_restoration/*.pdf
+Thesis_report/report_ct_restoration/*.aux
+Thesis_report/report_ct_restoration/*.log
+Thesis_report/report_ct_restoration/*.out
