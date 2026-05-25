@@ -1,4 +1,4 @@
-# A Cascaded Encoder-Decoder for CT Image Restoration
+# A Cascaded Encoder-Decoder Network for CT Image Restoration
 
 **Master's Thesis in Computer Science**  
 Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) — Pattern Recognition Lab (LME)
