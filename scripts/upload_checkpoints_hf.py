@@ -27,13 +27,16 @@ if not files_to_upload:
     print(f"No stage_*_best.pth files found under {LOCAL_ROOT}")
     raise SystemExit(1)
 
-print(f"Uploading {len(files_to_upload)} files to {REPO_ID}:\n")
-for f in files_to_upload:
-    print(f"  {f}")
-print()
+# Fetch files already on HF so we can skip them
+already_uploaded = set(api.list_repo_files(repo_id=REPO_ID, repo_type="model"))
 
-for local_path in files_to_upload:
-    # e.g. lodopab_naive_cascade_detach_large_01/stage_1_best.pth
+pending = [f for f in files_to_upload
+           if str(f.relative_to(LOCAL_ROOT)) not in already_uploaded]
+
+print(f"{len(files_to_upload)} total files, {len(already_uploaded)} already on HF, "
+      f"{len(pending)} to upload.\n")
+
+for local_path in pending:
     repo_path = str(local_path.relative_to(LOCAL_ROOT))
     print(f"Uploading {repo_path} ...", end=" ", flush=True)
     api.upload_file(

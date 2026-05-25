@@ -186,7 +186,7 @@ Masters-Thesis/
 │   └── ct_denoising.ipynb           # Inference, visualisation, results summary
 │
 ├── Thesis_report/
-│   ├── final_report_ct_restoration.pdf   # Compiled thesis report
+│   ├── report_ct_restoration.pdf         # Compiled thesis report
 │   ├── report_ct_restoration.zip         # LaTeX source archive
 │   └── report_ct_restoration/            # Extracted LaTeX source (compiled on Overleaf)
 │

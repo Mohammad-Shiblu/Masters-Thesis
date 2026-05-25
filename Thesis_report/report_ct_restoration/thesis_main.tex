@@ -74,7 +74,7 @@
 % %CONFIG
 % This is for students' theses
   \begin{deckblatt}
-    \Titel{A Cascaded Encoder-Decoder for CT Image Restoration} % Title
+    \Titel{A Cascaded Encoder-Decoder Network for CT Image Restoration} % Title
     \Name{Shiblu} % Last name
     \Vorname{Mohammad} % Given name
     \Geburtsort{Dhaka} % Place of birth
@@ -117,10 +117,9 @@ Erlangen, den ........ &  \centering Unterschrift
 \end{center}
 
 {\selectlanguage{german}%
-CT-Bilder in der klinischen Praxis leiden häufig unter zusammengesetzter Degradation durch Poisson-Rauschen sowie Bewegungs-, Ring- und Metallartefakte, während die meisten Restaurationsverfahren diese Effekte getrennt behandeln. Diese Arbeit untersucht, ob kaskadierte Encoder--Decoder-Netzwerke die CT-Bildrestauration unter solcher zusammengesetzter Korruption verbessern, indem ein physikalisch motiviertes Korruptionsprotokoll im Sinogrammbereich für LoDoPaB-CT entwickelt und drei zweistufige Varianten verglichen werden: unabhängiges stufenweises Training, End-to-End-Training und eine Residualformulierung.
+CT-Bilder in der klinischen Praxis sind oft zugleich durch Poisson-Rauschen sowie Bewegungs-, Ring- und Metallartefakte gestört, während die meisten Verfahren diese Effekte getrennt behandeln. Diese Arbeit untersucht, ob kaskadierte Encoder--Decoder die CT-Bildrestauration unter solcher kombinierten Korruption verbessern. Dazu wird für LoDoPaB-CT ein physikalisch motiviertes Protokoll im Sinogrammraum entwickelt, und drei zweistufige Varianten werden verglichen: unabhängiges stufenweises Training, End-to-End-Training und eine Residualvariante.
 
-Ein großes einstufiges U-Net erreicht unter der vorgeschlagenen Korruption 36.11 dB PSNR. Bei gleicher kleiner Kapazität pro Stufe bringt eine zusätzliche zweite Stufe nur begrenzte Verbesserungen gegenüber der kleinen einstufigen Basisvariante (35.39 dB), nämlich +0.15 bis +0.72 dB. Die beste kleine Kaskade, basierend auf Residualvorhersage mit Hann- und Shepp--Logan-gefilterten FBP-Eingaben, erreicht ebenfalls 36.11 dB, übertrifft die große einstufige Referenz jedoch nicht. Die Gradientenanalyse zeigt eine Abschwächung des Lernsignals der zweiten Stufe während der Konvergenz von Stufe 1, was darauf hindeutet, dass die für Stufe 2 verfügbare Information und nicht allein die Tiefe den Hauptengpass bildet.
-}
+Ein großes einstufiges U-Net erreicht unter der vorgeschlagenen Korruption 36.11 dB PSNR. Bei gleicher kleiner Kapazität pro Stufe bringt eine zweite Stufe nur begrenzte Verbesserungen gegenüber der kleinen einstufigen Basisvariante (35.39 dB), nämlich +0.15 bis +0.72 dB. Die beste kleine Kaskade nutzt Residualvorhersage zusammen mit Hann- und Shepp--Logan-gefilterten FBP-Eingaben und erreicht ebenfalls 36.11 dB, ohne die große einstufige Referenz zu übertreffen. Die Gradientenanalyse zeigt eine Abschwächung des Lernsignals der zweiten Stufe während der Konvergenz von Stufe 1. Dies deutet darauf hin, dass die für die zweite Stufe verfügbare Information und nicht allein die Netztiefe den Hauptengpass bildet.}
 
 \vspace{1.5cm}
 
@@ -133,7 +132,6 @@ Ein großes einstufiges U-Net erreicht unter der vorgeschlagenen Korruption 36.1
 
 {\selectlanguage{english}%
 CT images in clinical practice often suffer from compound degradation caused by Poisson noise together with motion, ring, and metal artifacts, yet most restoration methods treat these effects separately. This thesis investigates whether cascaded encoder--decoder networks improve CT image restoration under such compound corruption by developing a physics-informed sinogram-domain corruption protocol for LoDoPaB-CT and comparing three two-stage formulations: independent-stage, end-to-end, and residual.
-
 A single large U-Net reaches 36.11 dB PSNR under the proposed corruption. At matched small per-stage capacity, adding a second stage yields only limited gains over the small single-stage baseline (35.39 dB), ranging from +0.15 to +0.72 dB. The best small cascade, using residual prediction with Hann- and Shepp--Logan-filtered FBP inputs, matches the large single-stage reference at 36.11 dB without exceeding it. Gradient analysis shows attenuation of the Stage-2 learning signal as Stage-1 converges, indicating that information available to the second stage, rather than depth alone, is the main bottleneck.}
 
 
